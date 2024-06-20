@@ -108,7 +108,7 @@ export const Normal: FC = () => {
       <div>
         <p>IP Address: {clientIpAddress}</p>
         <p>Port: {clientPort}</p>
-        <p>PID: {pid}</p>
+        {/* <p>PID: {pid}</p> */}
       </div>
       <div
         style={{
@@ -233,6 +233,7 @@ export const Normal: FC = () => {
               color: "white",
               border: "none",
               borderRadius: "5px",
+              marginBottom: "10px",
             }}
           >
             終了
