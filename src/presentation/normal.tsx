@@ -2,11 +2,11 @@ import React, { FC, useState } from "react";
 
 export const Normal: FC = () => {
   const [serverPort, setServerPort] = useState("");
-  const [clientIpAddress, setServerIpAddress] = useState("");
+  const [clientIpAddress, setClientIpAddress] = useState("");
   const [clientPort, setClientPort] = useState("");
+  const [pid, setPid] = useState<string>("");
 
   // port番号を引数にしてサーバーを立ち上げる
-
   const createServer = async () => {
     console.log("サーバーを作成");
     try {
@@ -20,6 +20,11 @@ export const Normal: FC = () => {
       console.log("IP Address:", data.ip_address);
       console.log("Port:", data.port);
       console.log("Output:", data.output);
+      console.log("PID:", data.pid);
+      //ipaddressをセット
+      setClientIpAddress(data.ip_address);
+      // pidをセット
+      setPid(data.pid);
     } catch (error) {
       console.error("Failed to fetch:", error);
     }
@@ -38,6 +43,49 @@ export const Normal: FC = () => {
       console.log("IP Address:", data.ip_address);
       console.log("Port:", data.port);
       console.log("Output:", data.output);
+      console.log("PID:", data.pid);
+      // pidをセット
+      setPid(data.pid);
+    } catch (error) {
+      console.error("Failed to fetch:", error);
+    }
+  };
+
+  const stopServer = async () => {
+    console.log("サーバーを停止");
+    try {
+      const response = await fetch("http://localhost:8000/stopPhone", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ pid: parseInt(pid, 10) }),
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      console.log("Message:", data.message);
+    } catch (error) {
+      console.error("Failed to fetch:", error);
+    }
+  };
+
+  const muteServer = async () => {
+    console.log("サーバーをミュート");
+    try {
+      const response = await fetch("http://localhost:8000/onMute", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ pid: parseInt(pid, 10) }),
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      console.log("Message:", data.message);
     } catch (error) {
       console.error("Failed to fetch:", error);
     }
@@ -56,6 +104,12 @@ export const Normal: FC = () => {
       }}
     >
       <p>Normal</p>
+
+      <div>
+        <p>IP Address: {clientIpAddress}</p>
+        <p>Port: {clientPort}</p>
+        <p>PID: {pid}</p>
+      </div>
       <div
         style={{
           width: "100%",
@@ -105,6 +159,20 @@ export const Normal: FC = () => {
           >
             立ち上げ
           </button>
+          <button
+            onClick={stopServer}
+            style={{
+              width: "100px",
+              height: "50px",
+              backgroundColor: "#1e1f21",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              marginBottom: "10px",
+            }}
+          >
+            終了
+          </button>
         </div>
         <div
           style={{
@@ -121,7 +189,7 @@ export const Normal: FC = () => {
             type="text"
             placeholder="IP Address"
             value={clientIpAddress}
-            onChange={(e) => setServerIpAddress(e.target.value)}
+            onChange={(e) => setClientIpAddress(e.target.value)}
             style={{
               marginBottom: "10px",
               padding: "5px",
@@ -151,9 +219,37 @@ export const Normal: FC = () => {
               color: "white",
               border: "none",
               borderRadius: "5px",
+              marginBottom: "10px",
             }}
           >
             接続
+          </button>
+          <button
+            onClick={stopServer}
+            style={{
+              width: "100px",
+              height: "50px",
+              backgroundColor: "#1e1f21",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+            }}
+          >
+            終了
+          </button>
+          <button
+            onClick={muteServer}
+            style={{
+              width: "100px",
+              height: "50px",
+              backgroundColor: "#1e1f21",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              marginBottom: "10px",
+            }}
+          >
+            ミュート
           </button>
         </div>
       </div>
